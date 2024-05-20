@@ -3,7 +3,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import { getSystemInfo } from './services/systemInfoService';
-import { CpuStatus, RamStatus, DiskStatus, NetworkStatus } from './models/SystemStatus';
+import { CpuStatus, RamStatus, DiskStatus, NetworkStatus } from './models/exportStatuses';
 import { UserSettings } from './models/UserSettings';
 import { sendAlertEmail } from './services/emailService';
 import userSettingsRouter from './routes/userSettings';
@@ -35,16 +35,17 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
+  let alertCount = 0;
+
   setInterval(async () => {
     try {
       const info = await getSystemInfo();
       io.emit('systemInfo', info);
 
-      // Store system information in different collections
       const cpuStatus = new CpuStatus({ cores: info.cpu.cores, load: info.cpu.load });
       const ramStatus = new RamStatus({ usage: info.ram });
       const diskStatus = new DiskStatus({ usage: info.disk });
-      const networkStatus = new NetworkStatus(info.network);
+      const networkStatus = new NetworkStatus({ network: info.network });
 
       await cpuStatus.save();
       await ramStatus.save();
@@ -53,15 +54,14 @@ io.on('connection', (socket) => {
 
       const settings = await UserSettings.findOne().sort({ createdAt: -1 });
 
-      if (settings && settings.alertCount < 3) {
+      if (settings && alertCount < 3) {
         if (info.cpu.load > settings.maxCpu) {
           await sendAlertEmail(
             settings.email,
             'CPU Usage Alert',
             `CPU usage has exceeded the maximum threshold of ${settings.maxCpu}%. Current usage is ${info.cpu.load}%.`
           );
-          settings.alertCount += 1;
-          await settings.save();
+          alertCount++;
         }
         if (info.disk > settings.maxDisk) {
           await sendAlertEmail(
@@ -69,12 +69,10 @@ io.on('connection', (socket) => {
             'Disk Usage Alert',
             `Disk usage has exceeded the maximum threshold of ${settings.maxDisk}%. Current usage is ${info.disk}%.`
           );
-          settings.alertCount += 1;
-          await settings.save();
+          alertCount++;
         }
       }
 
-      // Calculate statistics
       const stats = await CpuStatus.aggregate([
         {
           $group: {
