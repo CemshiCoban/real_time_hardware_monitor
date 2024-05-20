@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Monitor</title>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>System Monitor</h1>
+  <div id="system-info"></div>
+  <div id="cpu-stats">
+    <p>Average CPU Usage: <span id="avgCpu">N/A</span>%</p>
+    <p>Minimum CPU Usage: <span id="minCpu">N/A</span>%</p>
+    <p>Maximum CPU Usage: <span id="maxCpu">N/A</span>%</p>
+  </div>
+  <form id="settings-form">
+    <label for="maxCpu">Max CPU Usage (%):</label>
+    <input type="number" id="maxCpu" name="maxCpu" required>
+    <br>
+    <label for="maxDisk">Max Disk Usage (%):</label>
+    <input type="number" id="maxDisk" name="maxDisk" required>
+    <br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <br>
+    <button type="submit">Save Settings</button>
+  </form>
+  <script>
+    const socket = io();
+
+    document.getElementById('settings-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const maxCpu = document.getElementById('maxCpu').value;
+      const maxDisk = document.getElementById('maxDisk').value;
+      const email = document.getElementById('email').value;
+
+      const response = await fetch('/api/set-max-values', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ maxCpu, maxDisk, email })
+      });
+
+      if (response.ok) {
+        alert('Settings saved successfully');
+      } else {
+        alert('Error saving settings');
+      }
+    });
+
+    socket.on('systemInfo', (info) => {
+      document.getElementById('system-info').innerHTML = `
+        <p>CPU Load: ${info.cpu.load}%</p>
+        <p>RAM Usage: ${info.ram}%</p>
+        <p>Disk Usage: ${info.disk}%</p>
+        ${Object.keys(info.network).map(iface => `
+          <p>Network (${iface}) Input: ${info.network[iface].inputBytes} Bytes</p>
+          <p>Network (${iface}) Output: ${info.network[iface].outputBytes} Bytes</p>
+        `).join('')}
+      `;
+    });
+
+    socket.on('cpuStats', (stats) => {
+      document.getElementById('avgCpu').innerText = stats.avgCpu.toFixed(2);
+      document.getElementById('minCpu').innerText = stats.minCpu.toFixed(2);
+      document.getElementById('maxCpu').innerText = stats.maxCpu.toFixed(2);
+    });
+  </script>
+</body>
+</html>

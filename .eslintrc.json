@@ -1,0 +1,35 @@
+{
+    "env": {
+      "browser": true,
+      "es2021": true
+    },
+    "plugins": ["prettier"],
+    "extends": [
+      "prettier",
+      "airbnb",
+      "airbnb/hooks"
+    ],
+    "rules": {
+      "no-unused-vars": "warn",
+      "no-undef": "warn",
+      "no-var": "warn",
+      "array-callback-return": "warn",
+      "class-methods-use-this": "off",
+      "eqeqeq": "warn",
+      "no-case-declarations": "warn",
+      "no-empty-pattern": "warn",
+      "no-new-wrappers": "warn",
+      "no-console": "off",
+      "import/no-import-module-exports": "off",
+      "quotes": "off",
+      "linebreak-style": "off",
+      "object-curly-newline": "off",
+      "max-len": ["warn", { "code": 200 }],
+      "no-underscore-dangle": "off",
+      "no-param-reassign": ["error", { "props": false }],
+      "camelcase": "off",
+      "max-classes-per-file": "off",
+      "@typescript-eslint/quotes": "off",
+      "prettier/prettier": "error"
+    }
+  }
