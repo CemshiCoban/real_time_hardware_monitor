@@ -1,31 +1,5 @@
 import si from 'systeminformation';
-
-interface CpuInfo {
-  load: number;
-  cores: number[];
-}
-
-interface RamInfo {
-  usage: number;
-}
-
-interface DiskInfo {
-  usage: number;
-}
-
-interface NetworkInfo {
-  [key: string]: {
-    inputBytes: number;
-    outputBytes: number;
-  };
-}
-
-interface SystemInfo {
-  cpu: CpuInfo;
-  ram: number;
-  disk: number;
-  network: NetworkInfo;
-}
+import { CpuInfo, NetworkInfo, SystemInfo } from '../types/systemInfo';
 
 export const getSystemInfo = async (): Promise<SystemInfo> => {
   const cpu = await si.currentLoad();

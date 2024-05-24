@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 
 interface IBaseStatus extends Document {
   createdAt: Date;

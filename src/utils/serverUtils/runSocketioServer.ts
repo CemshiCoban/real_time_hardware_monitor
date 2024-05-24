@@ -1,17 +1,22 @@
 import { Server } from 'socket.io';
-import server from './runHttpServer';
-import { handleSystemInfo } from '../controllers/systemController';
+import { Server as HttpServer } from 'http';
+import { handleSystemInfo } from '../../controllers/systemController';
 
-const io = new Server(server);
+const runSocketServer = (server: HttpServer) => {
+  const io = new Server(server);
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
+  io.on('connection', (socket) => {
+    console.log('a user connected');
 
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+
+    handleSystemInfo(io);
   });
 
-  handleSystemInfo(io);
-});
+  return io;
+};
 
-export default io;
+export default runSocketServer;
+

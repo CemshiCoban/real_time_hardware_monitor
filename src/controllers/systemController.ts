@@ -1,8 +1,8 @@
 import { Server } from 'socket.io';
-import { getSystemInfo } from '../../services/systemInfoService';
-import { CpuStatus, RamStatus, DiskStatus, NetworkStatus } from '../../models/exportStatuses';
-import { UserSettings } from '../../models/UserSettings';
-import { sendAlertEmail } from '../../services/emailService';
+import { getSystemInfo } from '../utils/systemInfoUtils';
+import { CpuStatus, RamStatus, DiskStatus, NetworkStatus } from '../models/hardware_models';
+import { UserSettings } from '../models/UserSettings';
+import { sendAlertEmail } from '../services/emailService';
 
 export const handleSystemInfo = (io: Server) => {
   let alertCount = 0;
