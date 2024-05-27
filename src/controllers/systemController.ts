@@ -7,6 +7,15 @@ import { sendAlertEmail } from '../services/emailService';
 export const handleSystemInfo = (io: Server) => {
   let alertCount = 0;
 
+  io.on('connection', (socket) => {
+    alertCount = 0;
+    console.log('alertCount reset to 0');
+
+    socket.on('disconnect', () => {
+      console.log('A user disconnected');
+    });
+  });
+
   setInterval(async () => {
     try {
       const info = await getSystemInfo();
@@ -23,6 +32,7 @@ export const handleSystemInfo = (io: Server) => {
       await networkStatus.save();
 
       const settings = await UserSettings.findOne().sort({ createdAt: -1 });
+      console.log(settings);
 
       if (settings && alertCount < 3) {
         if (info.cpu.load > settings.maxCpu) {

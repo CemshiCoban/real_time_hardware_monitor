@@ -16,7 +16,7 @@
   </div>
   <form id="settings-form">
     <label for="maxCpu">Max CPU Usage (%):</label>
-    <input type="number" id="maxCpu" name="maxCpu" required>
+    <input type="number" id="maxCpu2" name="maxCpu2" required>
     <br>
     <label for="maxDisk">Max Disk Usage (%):</label>
     <input type="number" id="maxDisk" name="maxDisk" required>
@@ -32,7 +32,7 @@
     document.getElementById('settings-form').addEventListener('submit', async (event) => {
       event.preventDefault();
 
-      const maxCpu = document.getElementById('maxCpu').value;
+      const maxCpu = document.getElementById('maxCpu2').value;
       const maxDisk = document.getElementById('maxDisk').value;
       const email = document.getElementById('email').value;
 
