@@ -6,12 +6,13 @@ import { sendAlertEmail } from '../services/emailService';
 
 export const handleSystemInfo = (io: Server) => {
   let alertCount = 0;
+  let maxAlertCount = 3;
 
   io.on('connection', (socket) => {
-    alertCount = 0;
-    console.log('alertCount reset to 0');
+    alertCount= maxAlertCount;
 
     socket.on('disconnect', () => {
+      alertCount = 0;
       console.log('A user disconnected');
     });
   });
