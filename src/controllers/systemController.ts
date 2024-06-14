@@ -33,7 +33,6 @@ export const handleSystemInfo = (io: Server) => {
       await networkStatus.save();
 
       const settings = await UserSettings.findOne().sort({ createdAt: -1 });
-      console.log(settings);
 
       if (settings && alertCount < 3) {
         if (info.cpu.load > settings.maxCpu) {
