@@ -6,7 +6,10 @@ interface IRamStatus extends IBaseStatus {
 }
 
 const RamStatusSchema: Schema = new Schema({
-  usage: { type: Number, required: true }
+  usage: { type: Number, required: true },
 }).add(BaseStatusSchema);
 
-export const RamStatus = mongoose.model<IRamStatus>('RamStatus', RamStatusSchema);
+export const RamStatus = mongoose.model<IRamStatus>(
+  'RamStatus',
+  RamStatusSchema,
+);
